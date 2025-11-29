@@ -1,26 +1,43 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import userModel from "../models/userModel.js";
+import userModel from '../models/userModel.js';
 
 export const register = async (req, res) => {
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-        return res.status(400).json({ success: false, message: "Missing required fields" });
+  if (!name || !email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Missing required fields' });
+  }
+
+  try {
+    const existingUser = await userModel.findOne({ email });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'User already exists' });
     }
 
-    try {
-        const existingUser = await userModel.findOne({ email });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new userModel({ name, email, password: hashedPassword });
+    await user.save();
 
-        if (existingUser) {
-            return res.status(400).json({ success: false, message: "User already exists" });
-        }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new userModel({ name, email, password: hashedPassword });
-        await user.save();
-        res.status(201).json({ success: true, message: "User registered successfully" });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-}
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res
+      .status(201)
+      .json({ success: true, message: 'User registered successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
