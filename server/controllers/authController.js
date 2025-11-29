@@ -41,3 +41,48 @@ export const register = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Missing required fields' });
+    }
+
+    try {
+
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+          return res
+            .status(400)
+            .json({ success: false, message: 'Invalid email or password' });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordValid) {
+          return res
+            .status(400)
+            .json({ success: false, message: 'Invalid email or password' });
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+          expiresIn: '7d',
+        });
+
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        res.json({ success: true, message: 'Login successful' });
+        
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
