@@ -7,7 +7,7 @@ const connectDB = async () => {
   mongoose.connection.on('error', (err) =>
     console.log('Database connection failed', err)
   );
-  await mongoose.connect(`${process.env.MONGODB_URI}/mern-auth`);
+  await mongoose.connect(`${process.env.MONGODB_URI}`);
 };
 
 export default connectDB;

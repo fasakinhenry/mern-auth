@@ -1,9 +1,12 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
+import transporter from '../config/nodemailer.js'
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
+
+  console.log(await userModel.find({}));
 
   if (!name || !email || !password) {
     return res
@@ -34,6 +37,16 @@ export const register = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    
+    // Send confirmation email
+    const mailOptions = {
+      from: "fasakinhenry@gmail.com",
+      to: email,
+      subject: 'Registration Successful',
+      text: `welcome ${name}, your registration was successful!\n\nYour account has been created with the following details:\n\nName: ${name}\nEmail: ${email}\n\nThank you for registering with us!`,
+    };
+
+    await transporter.sendMail(mailOptions);
     res
       .status(201)
       .json({ success: true, message: 'User registered successfully' });
