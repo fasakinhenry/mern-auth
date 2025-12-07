@@ -7,6 +7,7 @@ import {
   otpEmail,
 } from '../emails/templates/index.js                                                      ';
 
+// Register new users with name, email and password
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -57,6 +58,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Log the users in with email and password
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -100,6 +102,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Log the user out by clearing the token cookie
 export const logout = async (req, res) => {
   try {
     res.clearCookie('token', {
@@ -149,6 +152,7 @@ export const sendVerifyOtp = async (req, res) => {
   }
 };
 
+// Verify user's email with OTP
 export const verifyEmail = async (req, res) => {
   const { userId, otp } = req.body;
 
@@ -184,3 +188,12 @@ export const verifyEmail = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Check if a user is authenticated
+export const isAuthenticated = async (req, res) => {
+  try {
+    return res.json({ success: true, message: 'User is authenticated' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+}
