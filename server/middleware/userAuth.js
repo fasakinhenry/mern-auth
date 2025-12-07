@@ -21,10 +21,10 @@ const userAuth = async (req, res, next) => {
         message: 'Not authorized. Login Again!',
       });
     }
+    next();
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
-  next();
 };
 
 export default userAuth;
