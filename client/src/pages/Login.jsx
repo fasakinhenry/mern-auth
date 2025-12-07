@@ -3,6 +3,7 @@ import { assets } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { AppContent } from '../context/AppContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,11 +29,23 @@ const Login = () => {
           setIsLoggedin(true);
           navigate('/');
         } else {
-          alert(data.message);
+          toast.error(data.message);
         }
       } else {
+        const { data } = await axios.post(backendUrl + '/api/auth/login', {
+          email,
+          password,
+        });
+        if (data.success) {
+          setIsLoggedin(true);
+          navigate('/');
+        } else {
+          toast.error(data.message);
+        }
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(data.message);
+    }
   };
   return (
     <div className='flex items-center justify-center min-h-screen px-6 sm:px-0 bg-linear-to-br from-blue-200 to-purple-400'>
