@@ -11,8 +11,6 @@ import {
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
-  console.log(await userModel.find({}));
-
   if (!name || !email || !password) {
     return res
       .status(400)
