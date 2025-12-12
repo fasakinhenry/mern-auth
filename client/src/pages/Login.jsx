@@ -18,7 +18,9 @@ const Login = () => {
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
+
       axios.defaults.withCredentials = true;
+
       if (state === 'Sign Up') {
         const { data } = await axios.post(backendUrl + '/auth/register', {
           name,
@@ -46,9 +48,10 @@ const Login = () => {
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
+
   return (
     <div className='flex items-center justify-center min-h-screen px-6 sm:px-0 bg-linear-to-br from-blue-200 to-purple-400'>
       <img

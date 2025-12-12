@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+axios.defaults.withCredentials = true
+
 export const AppContent = createContext();
 
 export const AppContextProvider = (props) => {
@@ -17,7 +19,7 @@ export const AppContextProvider = (props) => {
         getUserData();
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -26,7 +28,7 @@ export const AppContextProvider = (props) => {
       const { data } = await axios.get(backendUrl + '/user/profile');
       data.success ? setUserData(data.userData) : toast.error(data.message);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     }
   };
 
