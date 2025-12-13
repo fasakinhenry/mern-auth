@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 4000;
 connectDB();
 
 // Configure CORS
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ['http://localhost:5174'];
 
 app.use(express.json());
 app.use(cookieParser());
