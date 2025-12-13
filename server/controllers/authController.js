@@ -11,8 +11,6 @@ import {
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
-  console.log(await userModel.find({}));
-
   if (!name || !email || !password) {
     return res
       .status(400)
@@ -120,7 +118,7 @@ export const logout = async (req, res) => {
 // Send Verification OTP to user's email
 export const sendVerifyOtp = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const userId = req.userId;
     const user = await userModel.findById(userId);
 
     // Check if user is verified already
@@ -154,7 +152,8 @@ export const sendVerifyOtp = async (req, res) => {
 
 // Verify user's email with OTP
 export const verifyEmail = async (req, res) => {
-  const { userId, otp } = req.body;
+  const { otp } = req.body;
+  const userId = req.userId
 
   if (!userId || !otp) {
     return res
