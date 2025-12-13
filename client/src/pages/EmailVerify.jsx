@@ -10,6 +10,7 @@ const EmailVerify = () => {
   const { backendUrl, isLoggedin, userData, getUserData } =
     useContext(AppContent);
   const navigate = useNavigate();
+
   const inputRefs = useRef([]);
 
   const handleInput = (e, index) => {
